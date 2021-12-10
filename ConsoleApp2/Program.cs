@@ -9,8 +9,7 @@ internal class Program
     {
         "Hello World!".PrintYellow();
         bool signaled;
-        var token = BitConverter.ToString(
-            BitConverter.GetBytes(DateTime.Now.Ticks)); //"CF2D4313-33DE-489D-9721-6AFF69841DEA"
+        var token = BitConverter.ToString(BitConverter.GetBytes(DateTime.Now.Ticks));
         _waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, token, out var createdNew);
 
         // If the handle was already there, inform the other process to exit itself.
@@ -32,7 +31,6 @@ internal class Program
             //TODO: Something else if desired.
             $"You know I am here for you :{DateTime.Now}".PrintYellow();
             signaled = _waitHandle.WaitOne(TimeSpan.FromMilliseconds(5 * 1000));
-            Thread.Sleep(TimeSpan.FromHours(1));
             "Task run to completed".PrintGreen();
             //waitHandle.Set();
             //$"You should leave Now".PrintYellow();
@@ -47,6 +45,6 @@ internal class Program
     private static void OnTimerElapsed(object? state)
     {
         $"Timer elapsed. : {DateTime.Now} {_count}".PrintErr();
-        if (_count++ == 2000) _waitHandle?.Set(); //条件退出
+        if (_count++ == 20) _waitHandle?.Set(); //条件退出
     }
 }
