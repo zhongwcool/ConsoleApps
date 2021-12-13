@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net48</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <ApplicationIcon>voice_32.ico</ApplicationIcon>
+        <LangVersion>10</LangVersion>
+        <AssemblyName>Speak</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="System.Net.Http"/>
+        <Reference Include="System.Speech"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.8.0"/>
+        <PackageReference Include="System.Console" Version="4.3.1"/>
+    </ItemGroup>
+
+</Project>
