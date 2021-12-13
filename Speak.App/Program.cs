@@ -28,17 +28,14 @@ internal class Program
             if (!string.IsNullOrEmpty(startOptions.Text))
             {
                 if (!string.IsNullOrEmpty(startOptions.Voice)) SelectVoiceByName(startOptions.Voice);
-
                 SpeechSynthesizer.Volume = startOptions.Volume;
                 SpeechSynthesizer.Rate = startOptions.Rate;
-
                 SpeechSynthesizer.SetOutputToDefaultAudioDevice();
                 SpeechSynthesizer.Speak(startOptions.Text);
 
                 return;
             }
 
-            Console.WriteLine("为什么可以打印出来");
             Console.WriteLine(HelpText.AutoBuild(parserResult, null, null));
         });
     }
