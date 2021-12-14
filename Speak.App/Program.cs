@@ -36,7 +36,7 @@ internal class Program
                 return;
             }
 
-            Console.WriteLine(HelpText.AutoBuild(parserResult, null, null));
+            HelpText.AutoBuild(parserResult, null, null).ToString().PrintGreen();
         });
     }
 
@@ -48,23 +48,23 @@ internal class Program
 
     private static void PrintShortVoiceInfo(VoiceInfo voiceInfo)
     {
-        Console.WriteLine($"Voice name: '{voiceInfo.Name}'");
+        $"Voice name: '{voiceInfo.Name}'".PrintGreen();
     }
 
     private static void PrintDetailedVoiceInfo(VoiceInfo voiceInfo = null)
     {
         voiceInfo ??= SpeechSynthesizer.Voice;
 
-        Console.WriteLine($"Voice name: '{voiceInfo.Name}'");
-        Console.WriteLine($"Description: '{voiceInfo.Description}'");
-        Console.WriteLine($"Gender: '{voiceInfo.Gender}'");
-        Console.WriteLine($"Age: '{voiceInfo.Age}'");
-        Console.WriteLine($"Culture: '{voiceInfo.Culture}'");
+        $"Voice name: '{voiceInfo.Name}'".PrintGreen();
+        $"Description: '{voiceInfo.Description}'".PrintGreen();
+        $"Gender: '{voiceInfo.Gender}'".PrintGreen();
+        $"Age: '{voiceInfo.Age}'".PrintGreen();
+        $"Culture: '{voiceInfo.Culture}'".PrintGreen();
         if (voiceInfo.AdditionalInfo.Any())
         {
-            Console.WriteLine("Additional information:");
+            "Additional information:".PrintGreen();
             foreach (var additionalInfo in voiceInfo.AdditionalInfo)
-                Console.WriteLine($"\t{additionalInfo.Key}: '{additionalInfo.Value}'");
+                $"\t{additionalInfo.Key}: '{additionalInfo.Value}'".PrintGreen();
         }
     }
 
@@ -73,15 +73,13 @@ internal class Program
         try
         {
             SpeechSynthesizer.SelectVoice(voiceName);
-            Console.WriteLine($"Selected voice '{voiceName}'.");
-
+            $"Selected voice '{voiceName}'.".PrintMagenta();
             return true;
         }
         catch (Exception)
         {
-            Console.WriteLine($"Voice with name '{voiceName}' not found.");
-            Console.WriteLine($"Selected voice '{SpeechSynthesizer.Voice.Name}'.");
-
+            $"Voice with name '{voiceName}' not found.".PrintErr();
+            $"Selected voice '{SpeechSynthesizer.Voice.Name}'.".PrintErr();
             return false;
         }
     }
