@@ -8,6 +8,16 @@ internal class Program
     private static void Main(string[] args)
     {
         "Hello World!".PrintYellow();
+
+        // Start a another thread that does something every 10 seconds.
+        var timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+
+        Task.Factory.StartNew(TaskLoop);
+        Console.Read();
+    }
+
+    private static void TaskLoop()
+    {
         bool signaled;
         var token = BitConverter.ToString(BitConverter.GetBytes(DateTime.Now.Ticks));
         _waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, token, out var createdNew);
@@ -22,22 +32,21 @@ internal class Program
             return;
         }
 
-        // Start a another thread that does something every 10 seconds.
-        var timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-
         // Wait if someone tells us to die or do every five seconds something else.
         do
         {
-            //TODO: Something else if desired.
             $"You know I am here for you :{DateTime.Now}".PrintYellow();
-            signaled = _waitHandle.WaitOne(TimeSpan.FromMilliseconds(5 * 1000));
-            "Task run to completed".PrintGreen();
+            signaled = _waitHandle.WaitOne(TimeSpan.FromSeconds(5));
+
+            //TODO: Something else if desired.
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            "Loop run to completed".PrintGreen();
             //waitHandle.Set();
             //$"You should leave Now".PrintYellow();
         } while (!signaled);
 
         // The above loop with an interceptor could also be replaced by an endless waiter
-        "Got signal to kill myself.".PrintMagenta();
+        "Got signal to kill loop task.".PrintMagenta();
     }
 
     private static int _count;
