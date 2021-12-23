@@ -1,4 +1,10 @@
-﻿namespace ConsoleApp3;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace ConsoleApp3;
 
 internal class Program
 {
@@ -14,21 +20,21 @@ internal class Program
 
     private static void DoStuff()
     {
-        var task = GetNameAsync();
+        var task = GetLocalIp();
 
         // Set up a continuation BEFORE MainWorkOfApplicationIDontWantBlocked
-        var anotherTask = task.ContinueWith(r => { Console.WriteLine("\n安排的明明白白：" + r.Result); });
+        var anotherTask = task.ContinueWith(r => { Console.WriteLine($"看到这句话代表上个任务已经完成, 上个任务的结果:{r.Result}"); });
 
         MainWorkOfApplicationIDontWantBlocked();
 
         // OR wait for the result AFTER
         var result = task.Result;
-        Console.WriteLine("\n苦心等来的结果：" + result);
+        Console.WriteLine("阻塞进程等待结果：" + result);
     }
 
     private static void MainWorkOfApplicationIDontWantBlocked()
     {
-        const string tang = "\n门前大桥下，\n游过一群鸭，\n快来快来数一数，\n二四六七八";
+        const string tang = "门前大桥下，\n游过一群鸭，\n快来快来数一数，\n二四六七八";
         foreach (var cha in tang.ToCharArray())
         {
             Console.Write(cha);
@@ -48,52 +54,64 @@ internal class Program
     {
         return Task.Factory.StartNew(() =>
         {
-            Console.Write(prompt);
+            Console.WriteLine(prompt);
             return Console.ReadLine();
         });
     }
 
-    private static async Task Test02()
+    private static Task<string> GetLocalIp()
     {
-        await Task.Delay(10 * 1000);
-        Console.WriteLine("Done!");
-    }
-
-    private static void Test01()
-    {
-        // Create the token source.
-        var source = new CancellationTokenSource();
-
-        // Pass the token to the cancelable operation.
-        ThreadPool.QueueUserWorkItem(DoSomeWork, source.Token);
-        Thread.Sleep(2500);
-
-        // Request cancellation.
-        source.Cancel();
-        Console.WriteLine("Cancellation set in token source...");
-        Thread.Sleep(2500);
-        // Cancellation should have happened, so call Dispose.
-        source.Dispose();
-    }
-
-    // Thread 2: The listener
-    private static void DoSomeWork(object obj)
-    {
-        var token = (CancellationToken)obj;
-
-        for (var i = 0; i < 100000; i++)
+        Console.WriteLine("using GetLocalIp to get main ip.");
+        return Task.Factory.StartNew(() =>
         {
-            if (token.IsCancellationRequested)
-            {
-                Console.WriteLine("In iteration {0}, cancellation has been requested...", i + 1);
-                // Perform cleanup if necessary.
-                //...
-                // Terminate the operation.
-                break;
-            }
+            Console.WriteLine("RunApp works");
+            var task = RunApp("route", "print");
+            var result = task.Result;
+            var match = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            if (match.Success) return match.Groups[2].Value;
 
-            // Simulate some work.
-            Thread.SpinWait(10000);
-        }
+            Console.WriteLine("TcpClient works");
+            try
+            {
+                var tcpClient = new TcpClient();
+                tcpClient.Connect("www.baidu.com", 80);
+                var ip = ((IPEndPoint)tcpClient.Client.LocalEndPoint)?.Address.ToString();
+                tcpClient.Close();
+                return ip;
+            }
+            catch (Exception)
+            {
+                return "127.0.0.1";
+            }
+        });
+    }
+
+    private static Task<string> RunApp(string filename, string arguments)
+    {
+        Console.WriteLine("RunApp start");
+        return Task.Factory.StartNew(() =>
+        {
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = filename,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                }
+            };
+            process.Start();
+
+            var streamReader = new StreamReader(process.StandardOutput.BaseStream, Encoding.Default);
+            var result = streamReader.ReadToEnd();
+            process.WaitForExit();
+            streamReader.Close();
+            Thread.Sleep(5000); // Too fast to feel
+            Console.WriteLine("RunApp end");
+            return result;
+        });
     }
 }
