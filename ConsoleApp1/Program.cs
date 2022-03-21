@@ -7,19 +7,17 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello World!");
+        "Hello World!".PrintMagenta();
 
         //TextCrc16();
 
-        //TestFloat();
-
-        //TestBitConverter();
+        TestBitConverter();
 
         //TestJson();
 
         //WatchByteInStream();
 
-        TestTask();
+        //TestTask();
     }
 
     private static void TestTask()
@@ -40,7 +38,7 @@ internal static class Program
         catch (AggregateException ae)
         {
             foreach (var e in ae.InnerExceptions)
-                Console.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
+                "e.GetType().FullName: e.Message".PrintGreen();
         }
 
         Console.Write("Task t Status: {0}", t.Status);
@@ -96,90 +94,65 @@ internal static class Program
     {
         byte[] data = { 0x06, 0x87 };
 
-        Console.WriteLine("原数据:");
+        "原数据:".PrintGreen();
         //Array.Reverse(data); //反转数组转成大端。
-        Console.WriteLine(BitConverter.ToString(data));
+        BitConverter.ToString(data).PrintGreen();
 
-        Console.WriteLine("还原为C#识别的小端字节序:");
+        "还原为C#识别的小端字节序:".PrintGreen();
         Array.Reverse(data); //还原为小端字节序
-        Console.WriteLine(BitConverter.ToString(data));
+        BitConverter.ToString(data).PrintGreen();
 
-        Console.WriteLine("还原数字:" + BitConverter.ToUInt16(data));
+        ("还原数字:" + BitConverter.ToUInt16(data)).PrintGreen();
     }
 
     private static void TestBitConverter()
     {
         SayHello();
 
-        Console.WriteLine("Now we do convert bool to byte[]:");
+        Console.WriteLine();
+
+        #region Now we convert a bool to byte[]
+
+        "Now we do convert bool to byte[]:".PrintMagenta();
         const bool y = false;
-        Console.WriteLine("raw data:" + y);
+        ("raw data:" + y).PrintGreen();
 
         var data = BitConverter.GetBytes(y); //得到小端字节序数组
-        Console.WriteLine(BitConverter.ToString(data));
+        BitConverter.ToString(data).PrintGreen();
 
-        Console.WriteLine("反转成传输用大端:");
+        "反转成传输用大端:".PrintGreen();
         Array.Reverse(data); //反转数组转成大端。
-        Console.WriteLine(BitConverter.ToString(data));
+        BitConverter.ToString(data).PrintGreen();
 
-        Console.WriteLine("还原为C#识别的小端字节序:");
+        "还原为C#识别的小端字节序:".PrintGreen();
         Array.Reverse(data); //还原为小端字节序
-        Console.WriteLine(BitConverter.ToString(data));
+        BitConverter.ToString(data).PrintGreen();
 
-        Console.WriteLine("还原数字:" + BitConverter.ToBoolean(data));
-    }
+        ("还原数字:" + BitConverter.ToBoolean(data)).PrintGreen();
 
-    private static void TextCrc16()
-    {
-        SayHello();
+        #endregion
 
-        Console.WriteLine("Now we do CRC16 check:");
-
-        byte[] data =
-            { 0x24, 0x43, 0x4D, 0x44, 0x01, 0x01, 0x01, 0x64, 0xF7, 0x76, 0xF7, 0x41, 0x54, 0xD9, 0x08, 0x00 };
-        Console.WriteLine("raw data:" + BitConverter.ToString(data));
-
-        data = Crc16Util.CRC16(data);
-        Console.WriteLine("crc data:" + BitConverter.ToString(data));
-
-        var yes = Crc16Util.CheckCRC16(data);
-
-        Console.WriteLine("CRC16 Check:" + yes);
         Console.WriteLine();
-    }
-
-    private static void SayHello()
-    {
-        var frames = new StackTrace().GetFrames();
-
-        Console.WriteLine("----------------------------------------------------------------------");
-        Console.WriteLine($"- method name: {frames[1].GetMethod()?.Name}");
-        Console.WriteLine("----------------------------------------------------------------------");
-    }
-
-    private static void TestFloat()
-    {
-        SayHello();
 
         #region Now we convert a int to byte[]
 
-        Console.WriteLine("Now we convert a int to byte[]:");
+        "Now we convert a int to byte[]:".PrintMagenta();
         var x = -6;
-        Console.WriteLine($"原数字:{x}");
+        $"原数字:{x}".PrintGreen();
 
-        Console.WriteLine("BitConverter.GetBytes() 默认得到小端字节序数组:");
+        "BitConverter.GetBytes() 默认得到小端字节序数组:".PrintGreen();
         var aa = BitConverter.GetBytes(x); //得到小端字节序数组
-        Console.WriteLine(BitConverter.ToString(aa));
+        BitConverter.ToString(aa).PrintGreen();
 
-        Console.WriteLine("反转成传输用大端:");
+        "反转成传输用大端:".PrintGreen();
         Array.Reverse(aa); //反转数组转成大端。
-        Console.WriteLine(BitConverter.ToString(aa));
+        BitConverter.ToString(aa).PrintGreen();
 
-        Console.WriteLine("还原为C#识别的小端字节序:");
+        "还原为C#识别的小端字节序:".PrintGreen();
         Array.Reverse(aa); //还原为小端字节序
-        Console.WriteLine(BitConverter.ToString(aa));
+        BitConverter.ToString(aa).PrintGreen();
 
-        Console.WriteLine("还原数字:" + BitConverter.ToInt32(aa));
+        ("还原数字:" + BitConverter.ToInt32(aa)).PrintGreen();
 
         #endregion
 
@@ -187,25 +160,78 @@ internal static class Program
 
         #region Now we convert a float to byte[]
 
-        Console.WriteLine("Now we convert a float to byte[]:");
+        "Now we convert a float to byte[]:".PrintMagenta();
         var z = 2500000f;
-        Console.WriteLine($"原数字 float:{z}");
+        $"原数字 float:{z}".PrintGreen();
 
-        Console.WriteLine("BitConverter.GetBytes() 默认得到小端字节序数组:");
+        "BitConverter.GetBytes() 默认得到小端字节序数组:".PrintGreen();
         var cc = BitConverter.GetBytes(z);
-        Console.WriteLine(BitConverter.ToString(cc));
+        BitConverter.ToString(cc).PrintGreen();
 
-        Console.WriteLine("反转成传输用大端:");
+        "反转成传输用大端:".PrintGreen();
         Array.Reverse(cc); //反转数组转成大端。
-        Console.WriteLine(BitConverter.ToString(cc));
+        BitConverter.ToString(cc).PrintGreen();
 
-        Console.WriteLine("还原为C#识别的小端字节序:");
+        "还原为C#识别的小端字节序:".PrintGreen();
         Array.Reverse(cc); //还原为小端字节序
-        Console.WriteLine(BitConverter.ToString(cc));
+        BitConverter.ToString(cc).PrintGreen();
 
-        Console.WriteLine("And we convert the byte[] to float:");
-        Console.WriteLine("还原数字:" + BitConverter.ToSingle(cc, 0));
+        "And we convert the byte[] to float:".PrintGreen();
+        ("还原数字:" + BitConverter.ToSingle(cc, 0)).PrintGreen();
 
         #endregion
+
+        Console.WriteLine();
+
+        #region Now we convert a short to byte[]
+
+        "Now we convert a short to byte[]:".PrintMagenta();
+        const short s = -180;
+        $"原数字 short:{s}".PrintGreen();
+
+        "BitConverter.GetBytes() 默认得到小端字节序数组:".PrintGreen();
+        var ss = BitConverter.GetBytes(s);
+        BitConverter.ToString(ss).PrintGreen();
+
+        "反转成传输用大端:".PrintGreen();
+        Array.Reverse(ss); //反转数组转成大端。
+        BitConverter.ToString(ss).PrintGreen();
+
+        "还原为C#识别的小端字节序:".PrintGreen();
+        Array.Reverse(ss); //还原为小端字节序
+        BitConverter.ToString(ss).PrintGreen();
+
+        "And we convert the byte[] to short:".PrintGreen();
+        ("还原数字:" + BitConverter.ToInt16(ss, 0)).PrintGreen();
+
+        #endregion
+    }
+
+    private static void TextCrc16()
+    {
+        SayHello();
+
+        "Now we do CRC16 check:".PrintGreen();
+
+        byte[] data =
+            { 0x24, 0x43, 0x4D, 0x44, 0x01, 0x01, 0x01, 0x64, 0xF7, 0x76, 0xF7, 0x41, 0x54, 0xD9, 0x08, 0x00 };
+        ("raw data:" + BitConverter.ToString(data)).PrintGreen();
+
+        data = Crc16Util.CRC16(data);
+        ("crc data:" + BitConverter.ToString(data)).PrintGreen();
+
+        var yes = Crc16Util.CheckCRC16(data);
+
+        ("CRC16 Check:" + yes).PrintGreen();
+        Console.WriteLine();
+    }
+
+    private static void SayHello()
+    {
+        var frames = new StackTrace().GetFrames();
+
+        "----------------------------------------------------------------------".PrintGreen();
+        $"- method name: {frames[1].GetMethod()?.Name}".PrintGreen();
+        "----------------------------------------------------------------------".PrintGreen();
     }
 }

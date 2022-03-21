@@ -10,11 +10,11 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello World!");
+        "Hello World!".PrintGreen();
 
         DoStuff();
 
-        Console.WriteLine("Press any key to exit...");
+        "Press any key to exit...".PrintGreen();
         Console.ReadKey(true);
     }
 
@@ -23,13 +23,13 @@ internal class Program
         var task = GetLocalIp();
 
         // Set up a continuation BEFORE MainWorkOfApplicationIDontWantBlocked
-        var anotherTask = task.ContinueWith(r => { Console.WriteLine($"看到这句话代表上个任务已经完成, 上个任务的结果:{r.Result}"); });
+        var anotherTask = task.ContinueWith(r => { $"看到这句话代表上个任务已经完成, 上个任务的结果:{r.Result}".PrintGreen(); });
 
         MainWorkOfApplicationIDontWantBlocked();
 
         // OR wait for the result AFTER
         var result = task.Result;
-        Console.WriteLine("阻塞进程等待结果：" + result);
+        $"阻塞进程等待结果：{result}".PrintGreen();
     }
 
     private static void MainWorkOfApplicationIDontWantBlocked()
@@ -54,23 +54,23 @@ internal class Program
     {
         return Task.Factory.StartNew(() =>
         {
-            Console.WriteLine(prompt);
+            prompt.PrintGreen();
             return Console.ReadLine();
         });
     }
 
     private static Task<string> GetLocalIp()
     {
-        Console.WriteLine("using GetLocalIp to get main ip.");
+        "using GetLocalIp to get main ip.".PrintGreen();
         return Task.Factory.StartNew(() =>
         {
-            Console.WriteLine("RunApp works");
+            "RunApp works".PrintGreen();
             var task = RunApp("route", "print");
             var result = task.Result;
             var match = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
             if (match.Success) return match.Groups[2].Value;
 
-            Console.WriteLine("TcpClient works");
+            "TcpClient works".PrintGreen();
             try
             {
                 var tcpClient = new TcpClient();
@@ -88,7 +88,7 @@ internal class Program
 
     private static Task<string> RunApp(string filename, string arguments)
     {
-        Console.WriteLine("RunApp start");
+        "RunApp start".PrintGreen();
         return Task.Factory.StartNew(() =>
         {
             var process = new Process
@@ -110,7 +110,7 @@ internal class Program
             process.WaitForExit();
             streamReader.Close();
             Thread.Sleep(5000); // Too fast to feel
-            Console.WriteLine("RunApp end");
+            "RunApp end".PrintGreen();
             return result;
         });
     }

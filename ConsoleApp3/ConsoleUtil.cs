@@ -1,6 +1,6 @@
 ﻿using static System.ConsoleColor;
 
-namespace Speak.App;
+namespace ConsoleApp3;
 
 public static class ConsoleUtil
 {
@@ -29,7 +29,7 @@ public static class ConsoleUtil
     private static void PrintColor(this string s, ConsoleColor color)
     {
         Console.ForegroundColor = color;
-        s.PrintGreen();
+        Console.WriteLine(s);
         Console.ResetColor();
     }
 }

@@ -35,14 +35,12 @@ internal class Program
         // Wait if someone tells us to die or do every five seconds something else.
         do
         {
-            $"You know I am here for you :{DateTime.Now}".PrintYellow();
+            $"You enter a loop :{DateTime.Now}".PrintYellow();
             signaled = _waitHandle.WaitOne(TimeSpan.FromSeconds(5));
 
             //TODO: Something else if desired.
             Thread.Sleep(TimeSpan.FromSeconds(2));
             "Loop run to completed".PrintGreen();
-            //waitHandle.Set();
-            //$"You should leave Now".PrintYellow();
         } while (!signaled);
 
         // The above loop with an interceptor could also be replaced by an endless waiter

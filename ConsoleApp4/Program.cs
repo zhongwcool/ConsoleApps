@@ -18,8 +18,8 @@ internal class Program
 
     private static void Test06()
     {
-        Console.WriteLine("本案主要展示：多线程操作List");
-        Console.WriteLine("");
+        "本案主要展示：多线程操作List".PrintGreen();
+        "\n".PrintGreen();
 
         var factory = new TaskFactory(TaskCreationOptions.AttachedToParent,
             TaskContinuationOptions.AttachedToParent);
@@ -33,7 +33,7 @@ internal class Program
             completedTasks => completedTasks.Where(w => !w.IsFaulted && !w.IsCanceled),
             TaskContinuationOptions.None);
 
-        tfTask.ContinueWith(task => { Console.WriteLine("长度是3000000吗? ：" + List.Count); });
+        tfTask.ContinueWith(task => { $"长度是3000000吗? ：{List.Count}".PrintGreen(); });
     }
 
     private static void Task_0()
@@ -69,8 +69,8 @@ internal class Program
 
     private static void Test05()
     {
-        Console.WriteLine("本案主要展示：使用IProgress实现异步编程的进程通知");
-        Console.WriteLine("");
+        "本案主要展示：使用IProgress实现异步编程的进程通知".PrintGreen();
+        "\n".PrintGreen();
 
         Display();
     }
@@ -80,13 +80,12 @@ internal class Program
         var progress = new Progress<int>(percent =>
         {
             Console.Clear();
-            Console.Write("{0}%", percent);
-            Console.WriteLine("");
-            Console.WriteLine("本案主要展示：使用IProgress实现异步编程的进程通知");
+            $"{percent}%".PrintGreen();
+            "本案主要展示：使用IProgress实现异步编程的进程通知".PrintGreen();
         });
         await Task.Run(() => MyTask(progress));
-        Console.WriteLine("");
-        Console.WriteLine("结束");
+        "\n".PrintGreen();
+        "结束".PrintGreen();
     }
 
     private static void MyTask(IProgress<int> progress)
@@ -104,19 +103,19 @@ internal class Program
 
     private static void Test04()
     {
-        Console.WriteLine("本案主要展示：Async+Await+Task 实现异步返回");
-        Console.WriteLine("");
+        "本案主要展示：Async+Await+Task 实现异步返回".PrintGreen();
+        "".PrintGreen();
 
         var ret1 = AsyncGetSum();
-        Console.WriteLine("主线程执行其他处理");
+        "主线程执行其他处理".PrintGreen();
         for (var i = 1; i <= 3; i++)
         {
-            Console.WriteLine("Call Main()");
+            "Call Main()".PrintGreen();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         var result = ret1.Result; //阻塞主线程
-        Console.WriteLine("任务执行结果：{0}", result);
+        $"任务执行结果：{result}".PrintGreen();
     }
 
     private static async Task<int> AsyncGetSum()
@@ -124,16 +123,16 @@ internal class Program
         var sum = 0;
         await Task.Run(() =>
         {
-            Console.WriteLine("使用Task执行异步操作");
+            "使用Task执行异步操作".PrintGreen();
             for (var i = 0; i < Random.Next(1, 100); i++)
             {
-                Console.WriteLine("In Task()");
+                "In Task()".PrintGreen();
                 Thread.Sleep(TimeSpan.FromMilliseconds(500));
                 sum += i;
             }
         });
 
-        Console.WriteLine("Exit from Task()");
+        "Exit from Task()".PrintGreen();
         return sum;
     }
 
@@ -143,35 +142,35 @@ internal class Program
 
     private static void Test03()
     {
-        Console.WriteLine("本案主要展示：有返回值Task");
-        Console.WriteLine("");
+        "本案主要展示：有返回值Task".PrintGreen();
+        "".PrintGreen();
 
         Meow("主线程");
 
         var task = CreateTask("1");
         task.Start();
         var result = task.Result; //阻塞主线程
-        Console.WriteLine("Task 1 Result is: {0}", result);
+        $"Task 1 Result is: {result}".PrintGreen();
 
         task = CreateTask("2");
         //该任务会运行在主线程中
         task.RunSynchronously();
         result = task.Result; //阻塞主线程
-        Console.WriteLine("Task 2 Result is: {0}", result);
+        $"Task 2 Result is: {result}".PrintGreen();
 
         task = CreateTask("3");
-        Console.WriteLine("Status: " + task.Status);
+        $"Status: {task.Status}".PrintGreen();
         task.Start();
 
         while (!task.IsCompleted)
         {
-            Console.WriteLine("Status: " + task.Status);
+            $"Status: {task.Status}".PrintGreen();
             Thread.Sleep(TimeSpan.FromSeconds(0.5));
         }
 
-        Console.WriteLine(task.Status);
+        task.Status.ToString().PrintGreen();
         result = task.Result;
-        Console.WriteLine("Task 3 Result is: {0}", result);
+        $"Task 3 Result is: {result}".PrintGreen();
 
         #region 常规使用方式
 
@@ -179,11 +178,11 @@ internal class Program
         var getsumtask = new Task<int>(GetSum);
         //启动任务,并安排到当前任务队列线程中执行任务(System.Threading.Tasks.TaskScheduler)
         getsumtask.Start();
-        Console.WriteLine("主线程执行其他处理");
+        "主线程执行其他处理".PrintGreen();
         //等待任务的完成执行过程。
         getsumtask.Wait();
         //获得任务的执行结果
-        Console.WriteLine("任务执行结果：{0}", getsumtask.Result.ToString());
+        $"任务执行结果：{getsumtask.Result.ToString()}".PrintGreen();
 
         #endregion
     }
@@ -207,7 +206,7 @@ internal class Program
     private static int GetSum()
     {
         var sum = 0;
-        Console.WriteLine("使用Task执行异步操作.");
+        "使用Task执行异步操作.".PrintGreen();
         for (var i = 0; i < 100; i++) sum += i;
 
         return sum;
@@ -219,31 +218,31 @@ internal class Program
 
     private static void Test02()
     {
-        Console.WriteLine("本案主要展示：Async+Await+Task 实现异步");
-        Console.WriteLine("");
+        "本案主要展示：Async+Await+Task 实现异步".PrintGreen();
+        "".PrintGreen();
 
-        Console.WriteLine("主线程执行业务处理.");
+        "主线程执行业务处理.".PrintGreen();
         AsyncFunction();
-        Console.WriteLine("主线程执行其他处理");
+        "主线程执行其他处理".PrintGreen();
         for (var i = 0; i < 10; i++)
         {
-            Console.WriteLine($"Main:i={i}");
+            $"Main:i={i}".PrintGreen();
             Thread.Sleep(2000);
         }
     }
 
     private static async void AsyncFunction()
     {
-        Console.WriteLine("使用Task执行异步操作");
+        "使用Task执行异步操作".PrintGreen();
         await Task.Run(() =>
         {
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine($"AsyncFunction:i={i}");
+                $"AsyncFunction:i={i}".PrintGreen();
                 Thread.Sleep(1000);
             }
         });
-        Console.WriteLine("使用Task执行异步操作- task end");
+        "使用Task执行异步操作- task end".PrintGreen();
     }
 
     #endregion
@@ -252,14 +251,14 @@ internal class Program
 
     private static void Test01()
     {
-        Console.WriteLine("本案主要展示：无返回值Task");
-        Console.WriteLine("");
+        "本案主要展示：无返回值Task".PrintGreen();
+        "".PrintGreen();
 
         var t1 = new Task(() => Wow("1"));
         t1.Start();
         t1.ContinueWith(task =>
         {
-            Console.WriteLine("任务完成，完成时候的状态为：");
+            "任务完成，完成时候的状态为：".PrintGreen();
             Console.WriteLine("IsCanceled={0}\tIsCompleted={1}\tIsFaulted={2}", task.IsCanceled, task.IsCompleted,
                 task.IsFaulted);
         });
@@ -285,12 +284,12 @@ internal class Program
         var life = Random.Next(1, 10);
         while (life > 0)
         {
-            //Console.WriteLine("Task: " + taskName + " HeartBeat: " + life);
+            //$"Task: {taskName} HeartBeat: {life}".PrintGreen();
             Thread.Sleep(1000);
             life--;
         }
 
-        Console.WriteLine("Task: " + taskName + " end");
+        $"Task: {taskName} end".PrintGreen();
     }
 
     #endregion
