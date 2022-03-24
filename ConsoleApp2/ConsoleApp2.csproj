@@ -7,4 +7,8 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Mar.Console" Version="0.2.0"/>
+    </ItemGroup>
+
 </Project>

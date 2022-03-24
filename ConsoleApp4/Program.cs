@@ -1,4 +1,6 @@
-﻿namespace ConsoleApp4;
+﻿using Mar.Console;
+
+namespace ConsoleApp4;
 
 internal class Program
 {

@@ -1,4 +1,6 @@
-﻿#nullable enable
+﻿using Mar.Console;
+
+#nullable enable
 namespace ConsoleApp2;
 
 internal class Program

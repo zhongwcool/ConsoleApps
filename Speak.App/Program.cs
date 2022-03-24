@@ -1,6 +1,7 @@
 ﻿using System.Speech.Synthesis;
 using CommandLine;
 using CommandLine.Text;
+using Mar.Console;
 
 namespace Speak.App;
 
