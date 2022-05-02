@@ -1,4 +1,4 @@
-# ConsoleApp2
+# App02.WaitOne
 
 使用EventWaitHandle实现低CPU占用率的可中断的while循环。
 
