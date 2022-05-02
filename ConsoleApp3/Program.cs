@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -85,6 +86,19 @@ internal class Program
                 return "127.0.0.1";
             }
         });
+    }
+
+    //TODO 修改为异步实现
+    private string GetInternetTime()
+    {
+        var client = new TcpClient("time.nist.gov", 13);
+        using var streamReader = new StreamReader(client.GetStream());
+        var response = streamReader.ReadToEnd();
+        var utcDateTimeString = response.Substring(7, 17);
+        var date = DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal);
+        var week = CultureInfo.GetCultureInfo("zh-CN").DateTimeFormat.GetDayName(date.DayOfWeek);
+        return date.ToString($"MM月dd日 {week} HH:mm:ss");
     }
 
     private static Task<string> RunApp(string filename, string arguments)
