@@ -3,7 +3,7 @@ using CommandLine;
 using CommandLine.Text;
 using Mar.Console;
 
-namespace Speak.App;
+namespace App05.Speak;
 
 internal class Program
 {

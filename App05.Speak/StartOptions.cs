@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Speak.App;
+namespace App05.Speak;
 
 public class StartOptions
 {

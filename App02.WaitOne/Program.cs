@@ -1,7 +1,7 @@
-﻿using Mar.Console;
+﻿#nullable enable
+using Mar.Console;
 
-#nullable enable
-namespace ConsoleApp2;
+namespace App02.WaitOne;
 
 internal class Program
 {

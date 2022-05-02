@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Mar.Console;
 
-namespace ConsoleApp3;
+namespace App03.Task;
 
 internal class Program
 {
@@ -54,7 +54,7 @@ internal class Program
     // contrived example (edited in response to Servy's comment)
     private static Task<string> PromptForStringAsync(string prompt)
     {
-        return Task.Factory.StartNew(() =>
+        return System.Threading.Tasks.Task.Factory.StartNew(() =>
         {
             prompt.PrintGreen();
             return Console.ReadLine();
@@ -64,7 +64,7 @@ internal class Program
     private static Task<string> GetLocalIp()
     {
         "using GetLocalIp to get main ip.".PrintGreen();
-        return Task.Factory.StartNew(() =>
+        return System.Threading.Tasks.Task.Factory.StartNew(() =>
         {
             "RunApp works".PrintGreen();
             var task = RunApp("route", "print");
@@ -104,7 +104,7 @@ internal class Program
     private static Task<string> RunApp(string filename, string arguments)
     {
         "RunApp start".PrintGreen();
-        return Task.Factory.StartNew(() =>
+        return System.Threading.Tasks.Task.Factory.StartNew(() =>
         {
             var process = new Process
             {

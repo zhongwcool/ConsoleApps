@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp1;
+﻿namespace App01.CRC;
 
 public static class Crc16Util
 {

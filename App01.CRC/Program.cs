@@ -2,7 +2,7 @@
 using Mar.Console;
 using Newtonsoft.Json;
 
-namespace ConsoleApp1;
+namespace App01.CRC;
 
 internal static class Program
 {
