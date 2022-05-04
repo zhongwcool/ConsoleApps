@@ -8,15 +8,15 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        Test05();
+        Test02();
 
         //固定，使程序不立即结束退出
         Console.ReadKey();
     }
 
-    #region 多线程操作List
+    #region Test06 多线程操作List
 
-    private static readonly List<long> List = new();
+    private static readonly List<long> Foos = new();
 
     private static void Test06()
     {
@@ -35,58 +35,66 @@ internal class Program
             completedTasks => completedTasks.Where(w => !w.IsFaulted && !w.IsCanceled),
             TaskContinuationOptions.None);
 
-        tfTask.ContinueWith(task => { $"长度是3000000吗? ：{List.Count}".PrintGreen(); });
+        tfTask.ContinueWith(task =>
+        {
+            lock (Foos)
+            {
+                $"长度是3000000吗? ：{Foos.Count}".PrintGreen();
+            }
+        });
     }
 
     private static void Task_0()
     {
         for (var i = 0; i < 1000000; i++)
-            lock (List)
+            lock (Foos)
             {
-                List.Add(i);
+                Foos.Add(i);
             }
     }
 
     private static void Task_1()
     {
         for (var i = 0; i < 1000000; i++)
-            lock (List)
+            lock (Foos)
             {
-                List.Add(i);
+                Foos.Add(i);
             }
     }
 
     private static void Task_2()
     {
         for (var i = 0; i < 1000000; i++)
-            lock (List)
+            lock (Foos)
             {
-                List.Add(i);
+                Foos.Add(i);
             }
     }
 
     #endregion
 
-    #region 使用IProgress实现异步编程的进程通知
+    #region Test05 使用IProgress实现异步编程的进程通知
 
     private static void Test05()
     {
         "本案主要展示：使用IProgress实现异步编程的进程通知".PrintGreen();
-        "\n".PrintGreen();
+        "Before DoWork".PrintGreen();
 
-        Display();
+        DoWork();
+
+        "After DoWork".PrintGreen();
     }
 
-    private static async void Display()
+    private static readonly Progress<int> MyProgress = new(percent =>
     {
-        var progress = new Progress<int>(percent =>
-        {
-            Console.Clear();
-            $"{percent}%".PrintGreen();
-            "本案主要展示：使用IProgress实现异步编程的进程通知".PrintGreen();
-        });
-        await Task.Run(() => MyTask(progress));
-        "\n".PrintGreen();
+        Console.Clear();
+        $"{percent}%".PrintGreen();
+        "本案主要展示：使用IProgress实现异步编程的进程通知".PrintGreen();
+    });
+
+    private static async void DoWork()
+    {
+        await Task.Run(() => MyTask(MyProgress));
         "结束".PrintGreen();
     }
 
@@ -101,18 +109,17 @@ internal class Program
 
     #endregion
 
-    #region Async+Await+Task 实现异步返回
+    #region Test04 Async+Await+Task 实现异步返回
 
     private static void Test04()
     {
         "本案主要展示：Async+Await+Task 实现异步返回".PrintGreen();
-        "".PrintGreen();
 
         var ret1 = AsyncGetSum();
         "主线程执行其他处理".PrintGreen();
         for (var i = 1; i <= 3; i++)
         {
-            "Call Main()".PrintGreen();
+            "Main Awake".PrintGreen();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
@@ -125,8 +132,8 @@ internal class Program
         var sum = 0;
         await Task.Run(() =>
         {
-            "使用Task执行异步操作".PrintGreen();
-            for (var i = 0; i < Random.Next(1, 100); i++)
+            "*********************************** 任务线程开始 ***********************************".PrintMagenta();
+            for (var i = 1; i <= 100; i++)
             {
                 "In Task()".PrintGreen();
                 Thread.Sleep(TimeSpan.FromMilliseconds(500));
@@ -134,13 +141,13 @@ internal class Program
             }
         });
 
-        "Exit from Task()".PrintGreen();
+        "*********************************** 任务线程结束 ***********************************".PrintMagenta();
         return sum;
     }
 
     #endregion
 
-    #region 有返回值Task
+    #region Test03 有返回值Task
 
     private static void Test03()
     {
@@ -178,7 +185,7 @@ internal class Program
 
         //创建任务
         var getsumtask = new Task<int>(GetSum);
-        //启动任务,并安排到当前任务队列线程中执行任务(System.Threading.Tasks.TaskScheduler)
+        //启动任务,并安排到当前任务队列线程中执行任务(TaskScheduler)
         getsumtask.Start();
         "主线程执行其他处理".PrintGreen();
         //等待任务的完成执行过程。
@@ -216,40 +223,40 @@ internal class Program
 
     #endregion
 
-    #region Async+Await+Task 实现异步
+    #region Test02 Async+Await+Task 实现异步
 
     private static void Test02()
     {
         "本案主要展示：Async+Await+Task 实现异步".PrintGreen();
         "".PrintGreen();
 
-        "主线程执行业务处理.".PrintGreen();
-        AsyncFunction();
-        "主线程执行其他处理".PrintGreen();
+        "主线程调用异步方法.".PrintGreen();
+        AsyncMethod();
+        "主线程继续".PrintGreen();
         for (var i = 0; i < 10; i++)
         {
-            $"Main:i={i}".PrintGreen();
+            $"[Main]:i={i}".PrintGreen();
             Thread.Sleep(2000);
         }
     }
 
-    private static async void AsyncFunction()
+    private static async void AsyncMethod()
     {
-        "使用Task执行异步操作".PrintGreen();
+        "异步操作-开始".PrintGreen();
         await Task.Run(() =>
         {
             for (var i = 0; i < 10; i++)
             {
-                $"AsyncFunction:i={i}".PrintGreen();
+                $"[Async]:i={i}".PrintGreen();
                 Thread.Sleep(1000);
             }
         });
-        "使用Task执行异步操作- task end".PrintGreen();
+        "异步操作-结束".PrintGreen();
     }
 
     #endregion
 
-    #region 无返回值Task
+    #region Test01 无返回值Task
 
     private static void Test01()
     {
@@ -260,9 +267,8 @@ internal class Program
         t1.Start();
         t1.ContinueWith(task =>
         {
-            "任务完成，完成时候的状态为：".PrintGreen();
-            Console.WriteLine("IsCanceled={0}\tIsCompleted={1}\tIsFaulted={2}", task.IsCanceled, task.IsCompleted,
-                task.IsFaulted);
+            "t1 任务完成，完成时候的状态为：".PrintGreen();
+            $"IsCanceled={task.IsCanceled}\tIsCompleted={task.IsCompleted}\tIsFaulted={task.IsFaulted}".PrintGreen();
         });
         var t2 = new Task(() => Wow("2"));
         t2.Start();

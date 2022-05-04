@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Mar.Console;
 
-namespace App03.Task;
+namespace App03.Task00;
 
 internal class Program
 {
@@ -22,15 +22,15 @@ internal class Program
 
     private static void DoStuff()
     {
-        var task = GetLocalIp();
+        var task = GetLocalIpv4();
 
         // Set up a continuation BEFORE MainWorkOfApplicationIDontWantBlocked
-        var anotherTask = task.ContinueWith(r => { $"看到这句话代表上个任务已经完成, 上个任务的结果:{r.Result}".PrintGreen(); });
+        task.ContinueWith(r => { $"看到这句话代表上个任务已经完成, 上个任务的结果:{r.Result}".PrintGreen(); });
 
         MainWorkOfApplicationIDontWantBlocked();
 
         // OR wait for the result AFTER
-        var result = task.Result;
+        var result = task.Result; //阻塞主线程
         $"阻塞进程等待结果：{result}".PrintGreen();
     }
 
@@ -54,25 +54,25 @@ internal class Program
     // contrived example (edited in response to Servy's comment)
     private static Task<string> PromptForStringAsync(string prompt)
     {
-        return System.Threading.Tasks.Task.Factory.StartNew(() =>
+        return Task.Factory.StartNew(() =>
         {
             prompt.PrintGreen();
             return Console.ReadLine();
         });
     }
 
-    private static Task<string> GetLocalIp()
+    #region 获得主IPV4
+
+    private static Task<string> GetLocalIpv4()
     {
-        "using GetLocalIp to get main ip.".PrintGreen();
-        return System.Threading.Tasks.Task.Factory.StartNew(() =>
+        "耗时任务-获取主IP: ".PrintGreen();
+        return Task.Factory.StartNew(() =>
         {
-            "RunApp works".PrintGreen();
             var task = RunApp("route", "print");
             var result = task.Result;
             var match = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
             if (match.Success) return match.Groups[2].Value;
 
-            "TcpClient works".PrintGreen();
             try
             {
                 var tcpClient = new TcpClient();
@@ -88,23 +88,10 @@ internal class Program
         });
     }
 
-    //TODO 修改为异步实现
-    private string GetInternetTime()
-    {
-        var client = new TcpClient("time.nist.gov", 13);
-        using var streamReader = new StreamReader(client.GetStream());
-        var response = streamReader.ReadToEnd();
-        var utcDateTimeString = response.Substring(7, 17);
-        var date = DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture,
-            DateTimeStyles.AssumeUniversal);
-        var week = CultureInfo.GetCultureInfo("zh-CN").DateTimeFormat.GetDayName(date.DayOfWeek);
-        return date.ToString($"MM月dd日 {week} HH:mm:ss");
-    }
-
     private static Task<string> RunApp(string filename, string arguments)
     {
         "RunApp start".PrintGreen();
-        return System.Threading.Tasks.Task.Factory.StartNew(() =>
+        return Task.Factory.StartNew(() =>
         {
             var process = new Process
             {
@@ -129,4 +116,25 @@ internal class Program
             return result;
         });
     }
+
+    #endregion
+
+    #region 获得互联网时间
+
+    private static async void GetInternetTimeAsync()
+    {
+        await Task.Run(() =>
+        {
+            var client = new TcpClient("time.nist.gov", 13);
+            using var streamReader = new StreamReader(client.GetStream());
+            var response = streamReader.ReadToEnd();
+            var utcDateTimeString = response.Substring(7, 17);
+            var date = DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal);
+            var week = CultureInfo.GetCultureInfo("zh-CN").DateTimeFormat.GetDayName(date.DayOfWeek);
+            date.ToString($"MM月dd日 {week} HH:mm:ss");
+        });
+    }
+
+    #endregion
 }
