@@ -2,23 +2,31 @@
 
 using Mar.Console;
 
-var cup = PourCoffee();
-"coffee is ready".PrintGreen();
+CookBreakfast();
 
-var eggs = FryEggs(2);
-"eggs are ready".PrintGreen();
+"The method CookBreakfast don't block ui thread, Or you can't see this tips".PrintErr();
+Console.Read();
 
-var bacon = FryBacon(3);
-"bacon is ready".PrintGreen();
+async void CookBreakfast()
+{
+    var cup = PourCoffee();
+    "coffee is ready".PrintGreen();
 
-var toast = ToastBread(2);
-ApplyButter(toast);
-ApplyJam(toast);
-"toast is ready".PrintGreen();
+    var eggs = await FryEggsAsync(2);
+    "eggs are ready".PrintGreen();
 
-var oj = PourOj();
-"oj is ready".PrintGreen();
-"Breakfast is ready!".PrintMagenta();
+    var bacon = await FryBaconAsync(3);
+    "bacon is ready".PrintGreen();
+
+    var toast = await ToastBreadAsync(2);
+    ApplyButter(toast);
+    ApplyJam(toast);
+    "toast is ready".PrintGreen();
+
+    var oj = PourOj();
+    "oj is ready".PrintGreen();
+    "Breakfast is ready!".PrintMagenta();
+}
 
 Juice PourOj()
 {
@@ -32,7 +40,7 @@ void ApplyJam(Toast toast) =>
 void ApplyButter(Toast toast) =>
     "Putting butter on the toast".PrintYellow();
 
-Toast ToastBread(int slices)
+async Task<Toast> ToastBreadAsync(int slices)
 {
     for (int slice = 0; slice < slices; slice++)
     {
@@ -40,36 +48,36 @@ Toast ToastBread(int slices)
     }
 
     "Start toasting...".PrintYellow();
-    Task.Delay(3000).Wait();
+    await Task.Delay(3000);
     "Remove toast from toaster".PrintYellow();
 
     return new Toast();
 }
 
-Bacon FryBacon(int slices)
+async Task<Bacon> FryBaconAsync(int slices)
 {
     $"putting {slices} slices of bacon in the pan".PrintYellow();
     "cooking first side of bacon...".PrintYellow();
-    Task.Delay(3000).Wait();
+    await Task.Delay(3000);
     for (int slice = 0; slice < slices; slice++)
     {
         "flipping a slice of bacon".PrintYellow();
     }
 
     "cooking the second side of bacon...".PrintYellow();
-    Task.Delay(3000).Wait();
+    await Task.Delay(3000);
     "Put bacon on plate".PrintYellow();
 
     return new Bacon();
 }
 
-Egg FryEggs(int howMany)
+async Task<Egg> FryEggsAsync(int howMany)
 {
     "Warming the egg pan...".PrintYellow();
-    Task.Delay(3000).Wait();
+    await Task.Delay(3000);
     $"cracking {howMany} eggs".PrintYellow();
     "cooking the eggs ...".PrintYellow();
-    Task.Delay(3000).Wait();
+    await Task.Delay(3000);
     "Put eggs on plate".PrintYellow();
 
     return new Egg();
