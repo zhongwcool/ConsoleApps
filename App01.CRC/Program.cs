@@ -12,25 +12,29 @@ internal static class Program
 
         //TextCrc16();
 
-        TestBitConverter();
+        //TestBitConverter();
 
         //TestJson();
 
         //WatchByteInStream();
 
-        //TestTask();
+        TestTask();
+
+        "Across the great wall, we can get reach every corner in the world".PrintMagenta();
     }
 
     private static void TestTask()
     {
+        SayHello();
+
         CancellationTokenSource source = new();
 
         var t = Task.Run(async delegate
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(5000), source.Token);
+            await Task.Delay(TimeSpan.FromMilliseconds(50000), source.Token);
             return 42;
         }, source.Token);
-        source.Cancel();
+        //source.Cancel();
 
         try
         {
@@ -42,9 +46,9 @@ internal static class Program
                 "e.GetType().FullName: e.Message".PrintGreen();
         }
 
-        Console.Write("Task t Status: {0}", t.Status);
+        $"Task t Status: {t.Status}".PrintYellow();
         if (t.Status == TaskStatus.RanToCompletion)
-            Console.Write(", Result: {0}", t.Result);
+            $"Result: {t.Result}".PrintYellow();
         source.Dispose();
     }
 

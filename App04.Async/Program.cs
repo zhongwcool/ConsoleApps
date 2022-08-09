@@ -8,9 +8,11 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        Test02();
+        Test04();
+        Test05();
 
         //固定，使程序不立即结束退出
+        "Across the great wall, we can get every corner in the world.".PrintYellow();
         Console.ReadKey();
     }
 
@@ -23,8 +25,7 @@ internal class Program
         "本案主要展示：多线程操作List".PrintGreen();
         "\n".PrintGreen();
 
-        var factory = new TaskFactory(TaskCreationOptions.AttachedToParent,
-            TaskContinuationOptions.AttachedToParent);
+        var factory = new TaskFactory(TaskCreationOptions.AttachedToParent, TaskContinuationOptions.AttachedToParent);
         var childTasks = new[]
         {
             factory.StartNew(Task_0),
@@ -102,7 +103,7 @@ internal class Program
     {
         for (var i = 0; i <= 100; ++i)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(Random.Next(1, 3)));
+            Thread.Sleep(TimeSpan.FromSeconds(Random.Next(1, 10)));
             progress?.Report(i);
         }
     }
@@ -116,15 +117,16 @@ internal class Program
         "本案主要展示：Async+Await+Task 实现异步返回".PrintGreen();
 
         var ret1 = AsyncGetSum();
-        "主线程执行其他处理".PrintGreen();
-        for (var i = 1; i <= 3; i++)
+        "本打算多线程执行".PrintGreen();
+        var result = ret1.Result; //阻塞主线程
+        $"任务执行结果：{result}".PrintYellow();
+        for (var i = 1; i <= 33; i++)
         {
-            "Main Awake".PrintGreen();
+            "结果主线程被阻塞了".PrintGreen();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
-        var result = ret1.Result; //阻塞主线程
-        $"任务执行结果：{result}".PrintGreen();
+        "Test04()结束".PrintMagenta();
     }
 
     private static async Task<int> AsyncGetSum()
@@ -132,16 +134,16 @@ internal class Program
         var sum = 0;
         await Task.Run(() =>
         {
-            "*********************************** 任务线程开始 ***********************************".PrintMagenta();
+            "*********************************** 耗时任务开始 ***********************************".PrintMagenta();
             for (var i = 1; i <= 100; i++)
             {
-                "In Task()".PrintGreen();
+                "某个耗时任务".PrintGreen();
                 Thread.Sleep(TimeSpan.FromMilliseconds(500));
                 sum += i;
             }
         });
 
-        "*********************************** 任务线程结束 ***********************************".PrintMagenta();
+        "*********************************** 耗时任务结束 ***********************************".PrintMagenta();
         return sum;
     }
 
@@ -278,7 +280,10 @@ internal class Program
         //Task.WaitAll(t3);
 
         var t4 = Task.Factory.StartNew(() => Wow("4"));
+
         Task.WaitAll(t1, t2, t3, t4);
+
+        "Across the great wall, we can get every corner in the world.".PrintGreen();
     }
 
     private static void Wow(string taskName)

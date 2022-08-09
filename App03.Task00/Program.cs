@@ -30,8 +30,9 @@ internal class Program
         MainWorkOfApplicationIDontWantBlocked();
 
         // OR wait for the result AFTER
+        $"阻塞进程等待结果：".PrintGreen();
         var result = task.Result; //阻塞主线程
-        $"阻塞进程等待结果：{result}".PrintGreen();
+        $"{result}".PrintGreen();
     }
 
     private static void MainWorkOfApplicationIDontWantBlocked()
