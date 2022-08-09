@@ -2,9 +2,11 @@
 
 using Mar.Console;
 
+"本文主要演示顺序执行多个异步Task".PrintMagenta();
+
 CookBreakfast();
 
-"The method CookBreakfast don't block ui thread, Or you can't see this tips".PrintErr();
+"The method CookBreakfast don't block ui thread, Or you can't see this tips at this position".PrintErr();
 Console.Read();
 
 async void CookBreakfast()
