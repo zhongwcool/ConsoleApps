@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Mar.Console;
 using Newtonsoft.Json;
 
@@ -9,6 +10,45 @@ internal static class Program
     private static void Main(string[] args)
     {
         "Hello World!".PrintMagenta();
+        long a = 883114;
+        long b = 889774;
+        $"{a * 1.0f / b * 1.0f}".PrintErr();
+
+
+        var url = "https://gitee.com/js-tech/iasystem-firmwares/raw/master/ias-wqm-a1/ias-wqm-a1.bin";
+        var task = GetFileSize(url);
+        task.ContinueWith(task1 => { $"文件大小：{task1.Result}".PrintErr(); });
+
+        var ccbSlots = new ObservableCollection<CcbSlot>
+        {
+            new() { CcbAddr = 4, Ts = DateTime.Now }, new() { CcbAddr = 2, Ts = DateTime.Now },
+            new() { CcbAddr = 3, Ts = DateTime.Now }, new() { CcbAddr = 4 }
+        };
+        var ccb2Slots = new ObservableCollection<CcbSlot>
+        {
+            new() { CcbAddr = 1, Ts = DateTime.Now }, new() { CcbAddr = 5, Ts = DateTime.Now },
+            new() { CcbAddr = 3, Ts = DateTime.Now }, new() { CcbAddr = 4 }
+        };
+
+        Thread.Sleep(3 * 1000);
+        var ts = DateTime.Now;
+        var mSlot = ccbSlots.FirstOrDefault(t => (ts - t.Ts).Seconds > 2);
+        while (mSlot != null)
+        {
+            ccbSlots.Remove(mSlot);
+            mSlot = ccbSlots.FirstOrDefault(t => (ts - t.Ts).Seconds > 2);
+        }
+
+        foreach (var slot in ccbSlots)
+        {
+            $" {slot.CcbAddr}".PrintMagenta();
+        }
+
+        foreach (var slot in ccb2Slots)
+        {
+            $" {slot.CcbAddr}".PrintGreen();
+        }
+
 
         //TextCrc16();
 
@@ -18,9 +58,38 @@ internal static class Program
 
         //WatchByteInStream();
 
-        TestTask();
+        //TestTask();
 
         "Across the great wall, we can get reach every corner in the world".PrintMagenta();
+        Console.Read();
+    }
+
+    class CcbSlot
+    {
+        public uint CcbAddr { get; set; }
+        public bool Drop { get; set; }
+        public DateTime Ts { get; set; }
+    }
+
+    private static async Task<long> GetFileSize(string url)
+    {
+        var client = new HttpClient();
+        var response = await client.GetAsync(url);
+        var fileSize = response.Content.ReadAsStreamAsync().Result.Length;
+        return fileSize;
+    }
+
+    private static async Task<long> GetFileSizeAsync(string url)
+    {
+        long fileSize = -1;
+        var client = new HttpClient();
+        await Task.Run(() =>
+        {
+            Thread.Sleep(5 * 1000);
+            var response = client.GetAsync(url);
+            fileSize = response.Result.Content.ReadAsStreamAsync().Result.Length;
+        });
+        return fileSize;
     }
 
     private static void TestTask()
